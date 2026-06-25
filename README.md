@@ -2,32 +2,33 @@
 
 ## Overview
 
-This project is a Node.js and Express API that integrates with the Open-Meteo Geospatial API and MongoDB. The application allows users to retrieve geospatial weather data, store it in a MongoDB database, and retrieve stored records through RESTful API endpoints.
+This project is a RESTful API built with **Node.js**, **Express**, **MongoDB**, and **Mongoose**. The application retrieves geospatial weather information using the Open-Meteo API and stores geospatial data in MongoDB. It also includes a second Location model for storing location information.
 
-This project was created for the 3.3 Geospatial Data API assignment.
+The API demonstrates MongoDB query operators, filtering with query strings, sorting, field selection, pagination, and error handling.
 
 ---
 
-## Technologies Used
+# Technologies Used
 
 * Node.js
 * Express.js
 * MongoDB
 * Mongoose
-* Open-Meteo API
 * dotenv
 * cors
+* Open-Meteo API
 
 ---
 
-## API Used
+# API Used
 
-### Open-Meteo API
+**Open-Meteo API**
 
 Documentation:
+
 https://open-meteo.com/en/docs
 
-Example Request:
+Example API Request:
 
 https://api.open-meteo.com/v1/forecast?latitude=29.95&longitude=-90.07&current=temperature_2m
 
@@ -35,78 +36,54 @@ No API key is required.
 
 ---
 
-## Installation
+# Project Structure
 
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
 ```
-
-2. Navigate into the project folder:
-
-```bash
-cd LuckettJasmin_Geospatial_API
-```
-
-3. Install dependencies:
-
-```bash
-npm install
-```
-
-4. Create a .env file and add your MongoDB connection string:
-
-```env
-MONGO_URI=your_mongodb_connection_string
-```
-
-5. Start the server:
-
-```bash
-node server.js
+config/
+controllers/
+models/
+routes/
+server.js
+README.md
+package.json
 ```
 
 ---
 
-## Project Structure
+# MongoDB Models
 
-```text
-project-root
-│
-├── config
-│   └── db.js
-│
-├── controllers
-│   └── geoController.js
-│
-├── models
-│   └── GeoData.js
-│
-├── routes
-│   └── geoRoutes.js
-│
-├── .env
-├── server.js
-└── README.md
-```
+## GeoData
+
+Stores:
+
+* Latitude
+* Longitude
+* Temperature
+* Created Date
+
+## Location
+
+Stores:
+
+* Location Name
+* Latitude
+* Longitude
+* Country
+* Created Date
 
 ---
 
-## Routes
+# API Routes
+
+## GeoData Routes
 
 ### GET /api/geo-data/fetch
 
-Retrieves geospatial weather data from the Open-Meteo API.
-
-Query Parameters:
-
-* latitude
-* longitude
+Retrieves live weather data from the Open-Meteo API using latitude and longitude.
 
 Example:
 
-```http
+```
 GET /api/geo-data/fetch?latitude=29.95&longitude=-90.07
 ```
 
@@ -114,24 +91,15 @@ GET /api/geo-data/fetch?latitude=29.95&longitude=-90.07
 
 ### POST /api/geo-data
 
-Stores geospatial data in MongoDB.
+Saves geospatial data to MongoDB.
 
-Example Request Body:
+Example JSON:
 
 ```json
 {
   "latitude": 29.95,
   "longitude": -90.07,
-  "temperature": 85
-}
-```
-
-Example Response:
-
-```json
-{
-  "message": "Saved",
-  "id": "mongodb_document_id"
+  "temperature": 82
 }
 ```
 
@@ -139,46 +107,113 @@ Example Response:
 
 ### GET /api/geo-data
 
-Retrieves all stored geospatial data from MongoDB.
+Returns all stored GeoData.
+
+Supports:
+
+* Query operators (`$gte`, `$lte`)
+* select()
+* sort()
+* Pagination
 
 Example:
 
-```http
-GET /api/geo-data
+```
+GET /api/geo-data?minTemp=60&maxTemp=90&sort=temperature&select=hideVersion&page=1&limit=5
 ```
 
 ---
 
 ### GET /api/geo-data/:id
 
-Retrieves a specific geospatial data record by MongoDB ID.
+Returns one GeoData document by MongoDB ID.
 
-Example:
+---
 
-```http
-GET /api/geo-data/6856a123456789abcdef1234
+# Location Routes
+
+### POST /api/locations
+
+Creates a new location.
+
+Example JSON:
+
+```json
+{
+  "locationName": "New Orleans",
+  "latitude": 29.95,
+  "longitude": -90.07,
+  "country": "USA"
+}
 ```
 
 ---
 
-## Error Handling
+### GET /api/locations
 
-The application includes error handling for:
+Returns all stored locations.
 
-* Invalid API requests
-* MongoDB connection errors
-* Invalid MongoDB IDs
-* Server errors
+Supports:
 
-Appropriate HTTP status codes and error messages are returned.
+* Query string filtering
+* select()
+* sort()
+* Pagination
+
+Example:
+
+```
+GET /api/locations?country=USA&sort=name&select=hideVersion&page=1&limit=5
+```
 
 ---
 
-## Author
+# Features
+
+* RESTful API
+* MongoDB with Mongoose
+* External API integration
+* Query string filtering
+* MongoDB Query Operators (`$gte`, `$lte`)
+* Field selection using `select()`
+* Sorting using `sort()`
+* Pagination using `skip()` and `limit()`
+* Error handling with HTTP status codes
+
+---
+
+# Running the Project
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file:
+
+```env
+MONGO_URI=mongodb://127.0.0.1:27017/geospatialDB
+```
+
+Start the server:
+
+```bash
+node server.js
+```
+
+Server:
+
+```
+http://localhost:3000
+```
+
+---
+
+# Author
 
 Jasmin Luckett
 
 Full Sail University
 
 Web Development Program
-# LuckettJasmin_Geospatial_API
