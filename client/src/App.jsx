@@ -23,7 +23,7 @@ function App() {
 
   const getGeoData = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/geo-data`);
+      const response = await axios.get(`${API_URL}/api/geo-data?sort=newest&limit=20`);
       setGeoData(response.data);
     } catch (error) {
       console.error("Error getting geo data:", error);
@@ -32,8 +32,9 @@ function App() {
 
   const getLocations = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/locations`);
-      setLocations(response.data);
+      const response = await axios.get(`${API_URL}/api/locations?sort=newest&limit=20`);
+
+     setLocations(response.data);
     } catch (error) {
       console.error("Error getting locations:", error);
     }
@@ -41,7 +42,17 @@ function App() {
 
   const addGeoData = async (e) => {
     e.preventDefault();
-
+    console.log("GeoData button clicked", geoForm);
+  
+    if (
+      !geoForm.latitude ||
+      !geoForm.longitude ||
+      !geoForm.temperature
+    ) {
+      alert("Please fill out all GeoData fields.");
+      return;
+    }
+  
     try {
       await axios.post(`${API_URL}/api/geo-data`, {
         latitude: Number(geoForm.latitude),
@@ -55,15 +66,26 @@ function App() {
         temperature: ""
       });
 
-      getGeoData();
+      await getGeoData();
     } catch (error) {
-      console.error("Error adding geo data:", error);
+      console.log("GeoData error:", error.response?.data || error.message);
     }
   };
 
   const addLocation = async (e) => {
     e.preventDefault();
-
+    console.log("Location button clicked", locationForm);
+  
+    if (
+      !locationForm.locationName ||
+      !locationForm.latitude ||
+      !locationForm.longitude ||
+      !locationForm.country
+    ) {
+      alert("Please fill out all Location fields.");
+      return;
+    }
+  
     try {
       await axios.post(`${API_URL}/api/locations`, {
         locationName: locationForm.locationName,
@@ -79,9 +101,9 @@ function App() {
         country: ""
       });
 
-      getLocations();
+     await getLocations();
     } catch (error) {
-      console.error("Error adding location:", error);
+      console.log("Location error:", error.response?.data || error.message);
     }
   };
 
